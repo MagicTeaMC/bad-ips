@@ -1,0 +1,32 @@
+name: Update blocklist
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */3 * * *'
+   
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+    - name: Fetch
+      run: | 
+        curl -O https://raw.githubusercontent.com/LittleJake/ip-blacklist/main/all_blacklist.txt
+        curl -O https://raw.githubusercontent.com/stamparm/ipsum/master/levels/3.txt
+        curl -O https://raw.githubusercontent.com/romainmarcoux/malicious-ip/main/full-aa.txt
+        curl -O https://raw.githubusercontent.com/MagicTeaMC/MCSTORM-IP/main/mcstorm-ip.txt
+        for F in `ls *.txt`;do echo "">> $F; done
+        cat *.txt|grep -v "#"|sort|uniq > bad-ips.txt
+    - name: Commit
+      run: |
+        git config --global user.email oneowo87@gmail.com
+        git config --global user.name MagicTeaMC
+        git add .
+        git commit -m "Update IP." -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main 
