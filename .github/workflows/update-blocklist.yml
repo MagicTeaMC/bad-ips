@@ -23,7 +23,7 @@ jobs:
       run: |
         git config --global user.email oneowo87@gmail.com
         git config --global user.name MagicTeaMC
-        git add .
+        git add bad-ips.txt
         git commit -m "Update IP." -a
     - name: Push changes
       uses: ad-m/github-push-action@master
