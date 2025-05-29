@@ -11,6 +11,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@main
+    - uses: fregante/setup-git-user@v2
     - name: Fetch
       run: | 
         curl -O https://raw.githubusercontent.com/LittleJake/ip-blacklist/main/ustc_blacklist_ip.txt
@@ -22,8 +23,6 @@ jobs:
         cat *.txt|grep -v "#"|grep -v ":"|grep -v '^$'|sort|uniq > bad-ips.txt
     - name: Commit
       run: |
-        git config --global user.email oneowo87@gmail.com
-        git config --global user.name MagicTeaMC
         git add bad-ips.txt
         git commit -m "Update IPs (Total `wc -l bad-ips.txt | cut -d ' ' -f 1,1` IPs)" -a
     - name: Push changes
