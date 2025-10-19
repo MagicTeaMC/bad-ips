@@ -20,13 +20,20 @@ jobs:
         curl -O https://raw.githubusercontent.com/romainmarcoux/malicious-ip/main/full-aa.txt
         curl -O https://raw.githubusercontent.com/montysecurity/C2-Tracker/refs/heads/main/data/all.txt
         for F in `ls *.txt`;do echo "">> $F; done
+        
         cat *.txt|grep -v "#"|grep -v ":"|grep -v '^$'|sort|uniq > bad-ips.txt
+        
+        cat *.txt|grep -v "#"|grep -v '^$'|sort|uniq > bad-ips-v6.txt
+        
     - name: Commit
       run: |
-        git add bad-ips.txt
-        git commit -m "Update IPs (Total `wc -l bad-ips.txt | cut -d ' ' -f 1,1` IPs)" -a
+        git add bad-ips.txt bad-ips-v6.txt
+        IPV4_COUNT=$(wc -l bad-ips.txt | cut -d ' ' -f 1,1)
+        IPV6_COUNT=$(wc -l bad-ips-v6.txt | cut -d ' ' -f 1,1)
+        git commit -m "Update IPs (IPv4: $IPV4_COUNT IPs, IPv4+v6: $IPV6_COUNT IPs)" -a
+        
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: main 
+        branch: main
